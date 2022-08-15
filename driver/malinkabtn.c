@@ -75,11 +75,11 @@ void BCM2835_close();
 int main()
 {   
     // INITIALIZATION
-    printf("malinkabtn: driver startup!");
+    printf("malinkabtn: driver startup!\n\r");
     int UINPUT_handle = UINPUT_initialize();
     BCM2835_initialize();
 
-    printf("malinkabtn: running main loop...");
+    printf("malinkabtn: running main loop...\n\r");
     // MAIN LOOP
     while(1)
     {
