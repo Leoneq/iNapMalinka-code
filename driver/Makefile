@@ -1,5 +1,7 @@
 CC=gcc
 CFLAGS=-I.
 
-hellomake: main.o
-	$(CC) -o main main.o -g -Wall -pthread -l bcm2835 -lrt
+malinkabtn: malinkabtn.o
+	$(CC) -o malinkabtn malinkabtn.o -g -Wall -pthread -l bcm2835 -lrt
+malinkabtn-sans: malinkabtn-sans.o
+	$(CC) -o malinkabtn-sans malinkabtn-sans.o -g -Wall -pthread -l bcm2835 -lrt
