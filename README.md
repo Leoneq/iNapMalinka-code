@@ -75,7 +75,7 @@ If you type in `dmesg | grep ft`, you should see a loaded touchscreen driver.
 
 ![image](https://user-images.githubusercontent.com/36605644/184629129-2d567e26-37fc-4030-9529-de09cf264bfa.png)
 
-# Installing the joystick driver
+## Installing the joystick driver
 First, clone and configure the code repository:
 ```
 sudo apt-get install cmake
@@ -94,7 +94,9 @@ cd ..
 make
 ```
 As a result, you will get two executable iles: `malinkabtn` and `malinkabtn-sans`, which is a special branch of the driver made just to fight sans.
-For the first setup, let's stick with the main `malinkabtn`.
+For the first setup, let's stick with the main `malinkabtn`, and test it with `sudo ./malinkabtn`:
+![image](https://user-images.githubusercontent.com/36605644/184636035-f2a6850e-3706-4112-b406-542449194325.png)
+Exit with CTRL+C. 
 
 ## Installing the screen driver
 I really recommend to use fbcp-ili9341 instead of the old, default fbcp. The author made a really blazing-fast driver, pushing the display to it's limits. To install it, follow the code:
@@ -112,6 +114,41 @@ cmake -DILI9488=ON -DGPIO_TFT_DATA_CONTROL=24 -DGPIO_TFT_RESET_PIN=25 -DGPIO_TFT
 make -j
 ```
 and you can test if it works, by running `sudo ./fbcp-ili9341`. If the screen flickers or shows artifacts, change the `DSPI_BUS_CLOCK_DIVISOR=10` to higher values, but remember that it must be an even number. More info in the [main repo](https://github.com/juj/fbcp-ili9341).
+
+## Auto startup
+The screen driver and joystick driver must load at every boot of the system automatically. You can either leave the executable files in their folders, or make a new folder, move them and delete the source files. 
+```
+mkdir ~/drivers
+cp /home/pi/fbcp-ili9341/build/fbcp-ili9341 /home/pi/drivers/fbcp-ili9341
+cp /home/pi/iNapMalinka-code/driver/malinkabtn /home/pi/drivers/malinkabtn
+rm -rf /home/pi/fbcp-ili9341
+rm -rf /home/pi/iNapMalinka-code
+```
+Open the startup file with `sudo nano /etc/rc.local` and paste following lines:
+```
+sudo /home/pi/fbcp-ili9341/build/fbcp-ili9341 &
+sudo /home/pi/iNapMalinka-code/driver/malinkabtn &
+```
+
+## Custom script run from RetroPie
+There are two ways in RetroPie to run custom scripts. Your .sh file can be put directly into `~/RetroPie/retropiemenu` to show as a script, or you can make your own emulationstation 'system'. Open the ES systems file with `sudo nano /etc/emulationstation/es_systems.cfg` and add the following system:
+```  
+<system>
+    <name>apps</name>
+    <fullname>Applications</fullname>
+    <path>/home/pi/RetroPie/roms/apps</path>
+    <extension>.sh .SH</extension>
+    <command>sudo./%BASENAME%.sh</command>
+    <platform>default</platform>
+    <theme>default</theme>
+</system>
+```
+Now, you can put your .sh scripts into ``/home/pi/RetroPie/roms/apps`` even through Samba!
+
+## Installing the X server
+To run graphical applications (that utilizes touchscreen, and colorful LCD) instead of normal console apps, you will need an X server. You can install it with `sudo apt-get install xserver-xorg` and run with `Xorg -config /etc/X11/X.conf :3` - but remember that this is just the X server, so you don't have even a window manager and other "x" stuff. But this is just enough for running embedded applications! Take a look at the example script to see how I did a GUI application. 
+
+
 
 
 The main project found [here](https://github.com/Leoneq/iNapMalinka) is licensed under CC BY-NC-SA 4.0!
