@@ -80,9 +80,11 @@ void BCM2835_close();
 int main()
 {     
     // INITIALIZATION
+    printf("malinkabtn-sans: driver startup!");
     int UINPUT_handle = UINPUT_initialize();
     BCM2835_initialize();
 
+    printf("malinkabtn-sans: running main loop...");
     // MAIN LOOP
     while(1)
     {
