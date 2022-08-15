@@ -75,15 +75,43 @@ If you type in `dmesg | grep ft`, you should see a loaded touchscreen driver.
 
 ![image](https://user-images.githubusercontent.com/36605644/184629129-2d567e26-37fc-4030-9529-de09cf264bfa.png)
 
-
-
-
-# Building
+# Installing the joystick driver
+First, clone and configure the code repository:
 ```
+sudo apt-get install cmake
 cd ~
 git clone https://github.com/Leoneq/iNapMalinka-code.git
-cd iNapMalinka-code
-# TODO!!!!
+cd iNapMalinka-code/driver
+tar zxvf bcm2835-1.66.tar.gz
+cd bcm2835-1.66/
+patch -p1 < ../bcm2835-1.66-aux-spi.patch
+# (Thanks Doug for the patch! https://groups.google.com/g/bcm2835/c/NHbYW9V2vmQ)
+./configure
+make
+sudo make check
+sudo make install
+cd ..
+make
 ```
+As a result, you will get two executable iles: `malinkabtn` and `malinkabtn-sans`, which is a special branch of the driver made just to fight sans.
+For the first setup, let's stick with the main `malinkabtn`.
+
+## Installing the screen driver
+I really recommend to use fbcp-ili9341 instead of the old, default fbcp. The author made a really blazing-fast driver, pushing the display to it's limits. To install it, follow the code:
+```
+cd ~
+git clone https://github.com/juj/fbcp-ili9341.git
+cd fbcp-ili9341
+mkdir build
+cd build
+```
+Now, to show a battery overlay, simply put the custom file `low_battery.cpp` and replace it in the source folder. Build the driver:
+```
+cp ~/iNapMalinka-code/fbcp-ili9341/low_battery.cpp ~/fbcp-ili9341/low_battery.cpp
+cmake -DILI9488=ON -DGPIO_TFT_DATA_CONTROL=24 -DGPIO_TFT_RESET_PIN=25 -DGPIO_TFT_BACKLIGHT=26 -DBACKLIGHT_CONTROL=ON -DSTATISTICS=0 -DSPI_BUS_CLOCK_DIVISOR=10 -DDISPLAY_CROPPED_INSTEAD_OF_SCALING=ON .. 
+make -j
+```
+and you can test if it works, by running `sudo ./fbcp-ili9341`. If the screen flickers or shows artifacts, change the `DSPI_BUS_CLOCK_DIVISOR=10` to higher values, but remember that it must be an even number. More info in the [main repo](https://github.com/juj/fbcp-ili9341).
+
 
 The main project found [here](https://github.com/Leoneq/iNapMalinka) is licensed under CC BY-NC-SA 4.0!
