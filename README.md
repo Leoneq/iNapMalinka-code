@@ -121,6 +121,7 @@ The screen driver and joystick driver must load at every boot of the system auto
 mkdir ~/drivers
 cp /home/pi/fbcp-ili9341/build/fbcp-ili9341 /home/pi/drivers/fbcp-ili9341
 cp /home/pi/iNapMalinka-code/driver/malinkabtn /home/pi/drivers/malinkabtn
+# OPTIONALLY: this will remove the repositories permanently!
 rm -rf /home/pi/fbcp-ili9341
 rm -rf /home/pi/iNapMalinka-code
 ```
@@ -148,7 +149,69 @@ Now, you can put your .sh scripts into ``/home/pi/RetroPie/roms/apps`` even thro
 ## Installing the X server
 To run graphical applications (that utilizes touchscreen, and colorful LCD) instead of normal console apps, you will need an X server. You can install it with `sudo apt-get install xserver-xorg` and run with `Xorg -config /etc/X11/X.conf :3` - but remember that this is just the X server, so you don't have even a window manager and other "x" stuff. But this is just enough for running embedded applications! Take a look at the example script to see how I did a GUI application. 
 
+## Increasing SWAP size
+This step isn't necessary but 256MB of ram isn't really much for C compiling, if one was about to build i. e. Xash3D or other emu from source.
+```
+sudo dphys-swapfile swapoff
+sudo nano /etc/dphys-swapfile
+```
+Change the `CONF_SWAPSIZE` to higher value, such as 512MB or 1024MB (remember that higher values may shorten the life od SD card significantly)
+```
+sudo dphys-swapfile setup
+sudo dphys-swapfile swapon
+```
+## Enabling the equalizer
+In order to improve the audio output, you may want to enable the audio equalizer. Install the alsa plugin with `sudo apt-get install -y libasound2-plugin-equal`, and edit the setting file `sudo nano ~/.asoundrc` - paste following content (assuming that headphones are device nr. 1)
+```
+pcm.!default {
+  type plug
+  slave.pcm plugequal;
+}
+ctl.!default {
+  type hw card 1
+}
+ctl.equal {
+  type equal;
+}
+pcm.plugequal {
+  type equal;
+  slave.pcm "plughw:1,0";
+}
+pcm.equal {
+  type plug;
+  slave.pcm plugequal;
+}
+```
+And reload the alsa with `alsactl kill rescan`. You can play an example sound with `speaker-test -t sine -f 400`, or `speaker-test -t wav -c 6` to play sine wave or a voice clip respectively. Alternatively, run a game in the background while adjusting the audio properties. Open the equalizer with `alsamixer -D equal`.
 
-
-
+# Other useful stuff
+### Overlay
+```
+dtc -@ -I dts -O dtb -o malinkats.dtbo malinkats.dts
+sudo cp malinkats.dtbo /boot/overlays/malinkats.dtbo
+```
+### Installing chrome
+```
+sudo apt-get install chromium-browser omxplayer libgnome-keyring-common libgnome-keyring0 libnspr4 libnss3 xdg-utils matchbox xorg gconf-service libgconf-2-4 rpi-chromium-mods libwidevinecdm0
+```
+### example script to run chromium in kiosk mode
+```
+echo "hi"
+sudo screen -dmS X Xorg -config /etc/X11/X.conf -nocursor :3
+export DISPLAY=:3
+chromium-browser --kiosk --app=https://jcw87.github.io/c2-sans-fight/ --start-fullscreen
+```
+### installing retropie extra
+```
+cd ~
+git clone https://github.com/zerojay/RetroPie-Extra.git
+cd RetroPie-Extra/
+./install-extras.sh
+```
+### installing nuklear
+```
+wget https://raw.githubusercontent.com/Immediate-Mode-UI/Nuklear/master/nuklear.h
+sudo apt-get install libglfw3 libglfw3-dev
+sudo apt-get install libglew-dev
+```
 The main project found [here](https://github.com/Leoneq/iNapMalinka) is licensed under CC BY-NC-SA 4.0!
