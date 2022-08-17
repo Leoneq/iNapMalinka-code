@@ -214,4 +214,8 @@ wget https://raw.githubusercontent.com/Immediate-Mode-UI/Nuklear/master/nuklear.
 sudo apt-get install libglfw3 libglfw3-dev
 sudo apt-get install libglew-dev
 ```
+### turning off the act led
+```
+echo 0  | sudo tee /sys/class/leds/led0/brightness
+```
 The main project found [here](https://github.com/Leoneq/iNapMalinka) is licensed under CC BY-NC-SA 4.0!
