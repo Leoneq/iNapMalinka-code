@@ -12,8 +12,8 @@
 				compatible = "focaltech,ft6236";
 				reg = <0x38>;
 				poll-interval = <10>;	
-				touchscreen-size-x = <480>;
-				touchscreen-size-y = <320>;
+				touchscreen-size-x = <320>;
+				touchscreen-size-y = <480>;
 			};
                 };
         };
