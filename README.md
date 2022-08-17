@@ -185,6 +185,7 @@ pcm.equal {
 And reload the alsa with `alsactl kill rescan`. You can play an example sound with `speaker-test -t sine -f 400`, or `speaker-test -t wav -c 6` to play sine wave or a voice clip respectively. Alternatively, run a game in the background while adjusting the audio properties. Open the equalizer with `alsamixer -D equal`.
 
 # Other useful stuff
+(needs cleaning!)
 ### Overlay
 ```
 dtc -@ -I dts -O dtb -o malinkats.dtbo malinkats.dts
