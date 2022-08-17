@@ -1,0 +1,61 @@
+# For more options and information see
+# http://rpf.io/configtxt
+# Some settings may impact device functionality. See link above for details
+
+# configuration file for iNap Malinka
+# 17 July 2022
+
+# uncomment this if your display has a black border of unused pixels visible
+# and your display can output without overscan
+#disable_overscan=1
+
+# uncomment the following to adjust overscan. Use positive numbers if console
+# goes off screen, and negative if there is too much border
+#overscan_left=16
+#overscan_right=16
+#overscan_top=16
+#overscan_bottom=16
+
+# uncomment to force a console size. By default it will be display's size minus
+# overscan.
+#framebuffer_width=1280
+#framebuffer_height=720
+
+#uncomment to overclock the arm. 700 MHz is the default.
+arm_freq=800
+
+#enabling two aux spi devices
+dtoverlay=spi1-2cs
+
+#custom image output
+hdmi_force_hotplug=1
+hdmi_group=2
+hdmi_mode=87
+hdmi_cvt=480 320 60 1 0 0 0
+
+# Enable audio (loads snd_bcm2835)
+gpio=12,13=a0
+dtparam=audio=on
+audio_pwm_mode=2
+dtoverlay=audremap,pins_12_13
+
+#enable or disable, whichever one sounds better for you
+disable_audio_dither=1
+#enable_audio_dither=1
+
+#enable FT6236
+force_eeprom_read=0
+dtparam=i2c1=on
+dtparam=i2c_arm=on
+dtoverlay=malinkats,touch-swapxy,touch-invx
+
+#disable ACT LED
+#dtparam=act_led_trigger=none
+#dtparam=act_led_activelow=off
+#(apparently doesnt work for pi zero 2w)
+
+[all]
+gpu_mem_256=128
+gpu_mem_512=256
+gpu_mem_1024=256
+overscan_scale=1

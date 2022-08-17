@@ -1,0 +1,46 @@
+#######################################
+# Data types (KEYWORD1)
+#######################################
+
+ESP8266_ISR_Servo KEYWORD1
+ESP8266FastTimerInterrupt	KEYWORD1
+ESP8266FastTimer	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+setFrequency	KEYWORD2
+attachInterruptInterval	KEYWORD2
+detachInterrupt	KEYWORD2
+disableTimer	KEYWORD2
+reattachInterrupt	KEYWORD2
+init  KEYWORD2
+run KEYWORD2
+setupServo  KEYWORD2
+setPosition  KEYWORD2
+getPosition  KEYWORD2
+setPulseWidth  KEYWORD2
+getPulseWidth  KEYWORD2
+deleteServo  KEYWORD2
+isEnabled KEYWORD2
+enable  KEYWORD2
+disable KEYWORD2
+enableAll KEYWORD2
+disableAll  KEYWORD2
+toggle  KEYWORD2
+getNumServos  KEYWORD2
+getNumAvailableServos KEYWORD2
+ESP8266_ISR_Servo_Handler KEYWORD2
+
+#######################################
+# Literals (LITERAL1)
+#######################################
+
+ESP8266_ISR_SERVO_VERSION  LITERAL1
+ESP8266_ISR_SERVO_VERSION_MAJOR  LITERAL1
+ESP8266_ISR_SERVO_VERSION_MINOR  LITERAL1
+ESP8266_ISR_SERVO_VERSION_PATCH  LITERAL1
+ESP8266_ISR_SERVO_VERSION_INT  LITERAL1  LITERAL1
+
+
