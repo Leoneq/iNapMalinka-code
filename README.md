@@ -219,4 +219,12 @@ sudo apt-get install libglew-dev
 ```
 echo 0  | sudo tee /sys/class/leds/led0/brightness
 ```
+### alsa
+```
+aplay something.wav
+alsamixer
+alsamixer -D equal
+aplay -l
+#lists all audio devices
+```
 The main project found [here](https://github.com/Leoneq/iNapMalinka) is licensed under CC BY-NC-SA 4.0!
