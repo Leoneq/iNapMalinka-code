@@ -227,4 +227,6 @@ alsamixer -D equal
 aplay -l
 #lists all audio devices
 ```
+### sdl
+aaaaaaaaaaaaaaaaaaaaaaaaaaaa
 The main project found [here](https://github.com/Leoneq/iNapMalinka) is licensed under CC BY-NC-SA 4.0!
