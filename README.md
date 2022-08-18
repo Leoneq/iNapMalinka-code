@@ -227,6 +227,10 @@ alsamixer -D equal
 aplay -l
 #lists all audio devices
 ```
-### sdl
-aaaaaaaaaaaaaaaaaaaaaaaaaaaa
+### turning off an input device
+```
+evtest --grab /dev/input/event0 > /dev/null
+```
+
+
 The main project found [here](https://github.com/Leoneq/iNapMalinka) is licensed under CC BY-NC-SA 4.0!
