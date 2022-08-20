@@ -66,9 +66,11 @@ typedef enum
     SLEEP,
     VOL_UP,
     VOL_DOWN,
-    MUTE
+    MUTE,
+    OVERLAY
 } SYS_BTN_STATE;
 int counter = 0;
+uint8_t hide_overlay = 0;
 
 uint16_t MCP_readChannel(uint8_t ch);
 int UINPUT_initialize();
@@ -78,13 +80,13 @@ void BCM2835_initialize();
 void BCM2835_close();
 
 int main()
-{     
+{   
     // INITIALIZATION
-    printf("malinkabtn-sans: driver startup!\n\r");
+    printf("malinkabtn: driver startup!\n\r");
     int UINPUT_handle = UINPUT_initialize();
     BCM2835_initialize();
 
-    printf("malinkabtn-sans: running main loop...\n\r");
+    printf("malinkabtn: running main loop...\n\r");
     // MAIN LOOP
     while(1)
     {
@@ -97,25 +99,27 @@ int main()
                 {
                     state = VOL_DOWN;
                     while(!bcm2835_gpio_lev(PIN_BTN_LT));
-                    printf("VOL DOWN\n\r");
                     break;
                 }
                 else if(!bcm2835_gpio_lev(PIN_BTN_RT))
                 {
                     state = VOL_UP;
-                    printf("VOL UP\n\r");
                     while(!bcm2835_gpio_lev(PIN_BTN_RT));
                     break;
                 }
                 else if(!bcm2835_gpio_lev(PIN_BTN_B))
                 {
                     state = MUTE;
-                    printf("VOL TOGGLE\n\r");
                     while(!bcm2835_gpio_lev(PIN_BTN_B));
                     break;
                 }
+                else if(!bcm2835_gpio_lev(PIN_BTN_Y))
+                {
+                    state = OVERLAY;
+                    while(!bcm2835_gpio_lev(PIN_BTN_Y));
+                    break;
+                }
             }
-
             switch(state)
             {
                 case SLEEP:
@@ -137,8 +141,25 @@ int main()
                 case MUTE:
                     system("sudo -u pi amixer set Headphone toggle");
                     break;
+                case OVERLAY:
+                    if(hide_overlay == 0)
+                    {
+                        hide_overlay = 1;
+                        FILE *FILE_handle = fopen("battery", "w");
+                        fprintf(FILE_handle, "non");
+                        fclose(FILE_handle);
+                    }
+                    else
+                    {
+                        hide_overlay = 0;
+                        FILE *FILE_handle = fopen("battery", "w");
+                        fprintf(FILE_handle, "--%%");
+                        fclose(FILE_handle);
+                    }
+                    break;
             }
-
+            while(0 == (MCP_readChannel(CHANNEL_BTN) >> 9));
+            continue;
         }
         struct input_event ev[17];
         memset(&ev, 0, sizeof(ev));
@@ -175,23 +196,7 @@ int main()
         ev[7].code = BTN_SELECT;
         ev[7].value = !bcm2835_gpio_lev(PIN_BTN_SELECT);
 
-        ev[8].type = EV_KEY;
-        ev[8].code = KEY_W;
-        ev[8].value = !bcm2835_gpio_lev(PIN_BTN_DPAD_UP);
-
-        ev[9].type = EV_KEY;
-        ev[9].code = KEY_S;
-        ev[9].value = !bcm2835_gpio_lev(PIN_BTN_DPAD_DOWN);
-
-        ev[10].type = EV_KEY;
-        ev[10].code = KEY_A;
-        ev[10].value = !bcm2835_gpio_lev(PIN_BTN_DPAD_LEFT);
-
-        ev[11].type = EV_KEY;
-        ev[11].code = KEY_D;
-        ev[11].value = !bcm2835_gpio_lev(PIN_BTN_DPAD_RIGHT);
-
-	    int TEMP = MCP_readChannel(CHANNEL_ABS_RX);
+        	    int TEMP = MCP_readChannel(CHANNEL_ABS_RX);
 	    if(TEMP <= 400) 
         {
             ev[10].type = EV_KEY;
@@ -243,7 +248,6 @@ int main()
             ev[9].code = KEY_W;
             ev[9].value = 0;
         }
-        
 
         ev[12].type = EV_ABS;
         ev[12].code = ABS_X;
@@ -287,19 +291,25 @@ int main()
             exit(1);
         }
 
-        if(counter >= 3000)
+        if(counter >= 300)
         {
             uint16_t bat = MCP_readChannel(CHANNEL_BAT);
-            FILE* FILE_handle = fopen("battery", "w+");
-            fprintf(FILE_handle, "%d", bat);
-            fclose(FILE_handle);
-            /*
-            the pi should shutdown at 3.0v
-            */
-            if(bat <= SHUTDOWN_VALUE)
+            float bat_percentage = (((((3.3*bat)/1024)*3.7)-3)/1.2)*100;
+            if(bat_percentage <= 1)
             {
                 system("sudo shutdown now");
             }
+            FILE *FILE_handle = fopen("battery", "w");
+            printf("malinkabtn: the battery is at %.f%%\n\r", bat_percentage);
+            if(hide_overlay == 1)
+            {
+                fprintf(FILE_handle, "non");
+            }
+            else
+            {
+                fprintf(FILE_handle, "%.f%%", bat_percentage);
+            }
+            fclose(FILE_handle);
             counter = 0;
         }
         counter++;
