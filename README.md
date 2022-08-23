@@ -182,7 +182,9 @@ pcm.equal {
   slave.pcm plugequal;
 }
 ```
-And reload the alsa with `alsactl kill rescan`. You can play an example sound with `speaker-test -t sine -f 400`, or `speaker-test -t wav -c 6` to play sine wave or a voice clip respectively. Alternatively, run a game in the background while adjusting the audio properties. Open the equalizer with `alsamixer -D equal`.
+And reload the alsa with `alsactl kill rescan`. You can play an example sound with `speaker-test -t sine -f 400`, or `speaker-test -t wav -c 6` to play sine wave or a voice clip respectively. Alternatively, run a game in the background while adjusting the audio properties. Open the equalizer with `alsamixer -D equal`. A proposed configuration:
+
+![image](https://user-images.githubusercontent.com/36605644/186242154-bb422139-986e-4c70-9d86-3458f4419cfa.png)
 
 # Other useful stuff
 (needs cleaning!)
