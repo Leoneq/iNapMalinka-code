@@ -32,7 +32,7 @@ In this file we will activate following things:
 * change the right screen resolution
 * enable PWM audio
 * disable unnecessary things
-Open the file with `sudo nano /boot/config.txt` or open it manually.
+Open the file with `sudo nano /boot/config.txt` or open it manually. (or just skip and copy-paste the file from the repo)
 
 ### Enabling SPI
 The auxiliary SPI is used for the radio and ADC converter. Add `dtoverlay=spi1-2cs` and **make sure to comment** `#dtparam=spi=on`.
