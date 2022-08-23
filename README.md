@@ -25,6 +25,12 @@ Log in with password "raspberry", and change it if you want. You should see a sc
 
 ![image](https://user-images.githubusercontent.com/36605644/174088933-b08761f4-0888-4aaa-b807-c0eca600544d.png)
 
+**Do not forget** to update your system!
+```
+sudo apt-get update
+sudo apt-get upgrade
+```
+
 ## config.txt
 In this file we will activate following things:
 * auxiliary SPI with two devices,
