@@ -166,6 +166,11 @@ Change the `CONF_SWAPSIZE` to higher value, such as 512MB or 1024MB (remember th
 sudo dphys-swapfile setup
 sudo dphys-swapfile swapon
 ```
+## Enabling audio
+Go to `raspi-config` and select headphones as the default audio device (System options > Audio > Headphones)
+![image](https://user-images.githubusercontent.com/36605644/186368711-3fdc0acb-ecf5-4859-b0a8-9bf40f693290.png)
+And then `sudo reboot now`.
+
 ## Enabling the equalizer
 In order to improve the audio output, you may want to enable the audio equalizer. Install the alsa plugin with `sudo apt-get install -y libasound2-plugin-equal`, and edit the setting file `sudo nano ~/.asoundrc` - paste following content (assuming that headphones are device nr. 1)
 ```
