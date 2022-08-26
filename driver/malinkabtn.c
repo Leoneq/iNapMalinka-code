@@ -66,7 +66,7 @@ typedef enum
 } SYS_BTN_STATE;
 int counter = 0;
 uint8_t hide_overlay = 0;
-uint8_t sleep = 0;
+uint8_t sleep_state = 0;
 
 uint16_t MCP_readChannel(uint8_t ch);
 int UINPUT_initialize();
@@ -133,12 +133,12 @@ int main()
                     if(bcm2835_gpio_lev(PIN_TFT_LED) == 1)
                     {
                         bcm2835_gpio_write(PIN_TFT_LED, LOW);
-			sleep = 1;
+			sleep_state = 1;
                     }
                     else 
                     {
                         bcm2835_gpio_write(PIN_TFT_LED, HIGH);
-			sleep = 0;
+			sleep_state = 0;
                     }
                     break;
                 case VOL_UP:
@@ -166,12 +166,16 @@ int main()
                         fclose(FILE_handle);
                     }
                     break;
+		case KEY:
+		    goto btn;
             }
             while(0 == (MCP_readChannel(CHANNEL_BTN) >> 9));
             continue;
         }
 	    
-	if(sleep == 1)
+	btn:
+	    
+	if(sleep_state == 1)
 	{
 	    usleep(POLLING_DELAY_US);
 	    continue;
@@ -261,7 +265,7 @@ int main()
         #endif
 	    
 	ev[16].type = EV_KEY;
-        ev[16].code = KEY_ESC;
+        ev[16].code = BTN_C;
         ev[16].value = !(MCP_readChannel(CHANNEL_BTN) >> 9);
 
         ev[17].type = EV_SYN;
@@ -352,7 +356,7 @@ int UINPUT_initialize()
     ioctl(inputfd, UI_SET_KEYBIT, KEY_A);
     ioctl(inputfd, UI_SET_KEYBIT, KEY_S);
     ioctl(inputfd, UI_SET_KEYBIT, KEY_D);
-    ioctl(inputfd, UI_SET_KEYBIT, KEY_ESC);
+    ioctl(inputfd, UI_SET_KEYBIT, BTN_C);
 
     UINPUT_setupAbs(inputfd, ABS_X,  ABS_X_MIN, ABS_X_MAX);
     UINPUT_setupAbs(inputfd, ABS_Y,  ABS_Y_MIN, ABS_Y_MAX);
