@@ -1,6 +1,6 @@
 // https://github.com/GrantEdwards/uinput-joystick-demo/blob/master/uinput-demo.c
 // by @leoneq112 for iNap Malinka, 2022
-
+// 26.08.2022
 #include <stdio.h>
 #include <linux/uinput.h>
 #include <fcntl.h>
