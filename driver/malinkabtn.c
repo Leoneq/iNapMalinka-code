@@ -90,6 +90,9 @@ int main()
     // MAIN LOOP
     while(1)
     {
+	struct input_event ev[18];
+        memset(&ev, 0, sizeof(ev));
+	 
         if(0 == (MCP_readChannel(CHANNEL_BTN) >> 9)) // optimization lvl 100
         {
 	    usleep(30000); //software debouncing
@@ -167,8 +170,6 @@ int main()
                     }
                     break;
 		case KEY:
-		    struct input_event ev[2];
-        	    memset(&ev, 0, sizeof(ev));
 		    ev[0].type = EV_KEY;
         	    ev[0].code = BTN_C;
                     ev[0].value = 1;
@@ -194,10 +195,7 @@ int main()
 	    usleep(POLLING_DELAY_US);
 	    continue;
 	}
-	    
-        struct input_event ev[18];
-        memset(&ev, 0, sizeof(ev));
-
+	
         ev[0].type = EV_KEY;
         ev[0].code = BTN_A;
         ev[0].value = !bcm2835_gpio_lev(PIN_BTN_A);
