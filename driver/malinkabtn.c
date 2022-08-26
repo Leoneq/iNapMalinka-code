@@ -167,7 +167,21 @@ int main()
                     }
                     break;
 		case KEY:
-		    goto btn;
+		    struct input_event ev[2];
+        	    memset(&ev, 0, sizeof(ev));
+		    ev[0].type = EV_KEY;
+        	    ev[0].code = BTN_C;
+                    ev[0].value = 1;
+	            ev[1].type = EV_SYN;
+	            ev[1].code = SYN_REPORT;
+                    ev[1].value = 0;
+
+                    if(write(UINPUT_handle, &ev, sizeof ev) < 0)
+                    {
+                        perror("write");
+                        exit(1);
+                    }
+		    break;
             }
             while(0 == (MCP_readChannel(CHANNEL_BTN) >> 9));
             continue;
