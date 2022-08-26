@@ -25,6 +25,12 @@ Log in with password "raspberry", and change it if you want. You should see a sc
 
 ![image](https://user-images.githubusercontent.com/36605644/174088933-b08761f4-0888-4aaa-b807-c0eca600544d.png)
 
+**Do not forget** to update your system!
+```
+sudo apt-get update
+sudo apt-get upgrade
+```
+
 ## config.txt
 In this file we will activate following things:
 * auxiliary SPI with two devices,
@@ -32,7 +38,7 @@ In this file we will activate following things:
 * change the right screen resolution
 * enable PWM audio
 * disable unnecessary things
-Open the file with `sudo nano /boot/config.txt` or open it manually.
+Open the file with `sudo nano /boot/config.txt` or open it manually. (or just skip and copy-paste the file from the repo)
 
 ### Enabling SPI
 The auxiliary SPI is used for the radio and ADC converter. Add `dtoverlay=spi1-2cs` and **make sure to comment** `#dtparam=spi=on`.
@@ -160,6 +166,11 @@ Change the `CONF_SWAPSIZE` to higher value, such as 512MB or 1024MB (remember th
 sudo dphys-swapfile setup
 sudo dphys-swapfile swapon
 ```
+## Enabling audio
+Go to `raspi-config` and select headphones as the default audio device (System options > Audio > Headphones)
+![image](https://user-images.githubusercontent.com/36605644/186368711-3fdc0acb-ecf5-4859-b0a8-9bf40f693290.png)
+And then `sudo reboot now`.
+
 ## Enabling the equalizer
 In order to improve the audio output, you may want to enable the audio equalizer. Install the alsa plugin with `sudo apt-get install -y libasound2-plugin-equal`, and edit the setting file `sudo nano ~/.asoundrc` - paste following content (assuming that headphones are device nr. 1)
 ```
@@ -182,7 +193,9 @@ pcm.equal {
   slave.pcm plugequal;
 }
 ```
-And reload the alsa with `alsactl kill rescan`. You can play an example sound with `speaker-test -t sine -f 400`, or `speaker-test -t wav -c 6` to play sine wave or a voice clip respectively. Alternatively, run a game in the background while adjusting the audio properties. Open the equalizer with `alsamixer -D equal`.
+And reload the alsa with `alsactl kill rescan`. You can play an example sound with `speaker-test -t sine -f 400`, or `speaker-test -t wav -c 6` to play sine wave or a voice clip respectively. Alternatively, run a game in the background while adjusting the audio properties. Open the equalizer with `alsamixer -D equal`. A proposed configuration:
+
+![image](https://user-images.githubusercontent.com/36605644/186242154-bb422139-986e-4c70-9d86-3458f4419cfa.png)
 
 # Other useful stuff
 (needs cleaning!)
