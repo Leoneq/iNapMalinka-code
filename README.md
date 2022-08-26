@@ -145,7 +145,7 @@ There are two ways in RetroPie to run custom scripts. Your .sh file can be put d
     <fullname>Applications</fullname>
     <path>/home/pi/RetroPie/roms/apps</path>
     <extension>.sh .SH</extension>
-    <command>sudo./%BASENAME%.sh</command>
+    <command>sudo /home/pi/RetroPie/roms/apps/%BASENAME%.sh</command>
     <platform>default</platform>
     <theme>default</theme>
 </system>
