@@ -57,6 +57,7 @@ const struct uinput_setup setup =
 };
 typedef enum
 {
+    KEY,
     SLEEP,
     VOL_UP,
     VOL_DOWN,
@@ -65,6 +66,7 @@ typedef enum
 } SYS_BTN_STATE;
 int counter = 0;
 uint8_t hide_overlay = 0;
+uint8_t sleep = 0;
 
 uint16_t MCP_readChannel(uint8_t ch);
 int UINPUT_initialize();
@@ -90,7 +92,8 @@ int main()
     {
         if(0 == (MCP_readChannel(CHANNEL_BTN) >> 9)) // optimization lvl 100
         {
-            SYS_BTN_STATE state = SLEEP;
+	    usleep(30000); //software debouncing
+            SYS_BTN_STATE state = KEY;
             while(0 == (MCP_readChannel(CHANNEL_BTN) >> 9))
             {
                 if(!bcm2835_gpio_lev(PIN_BTN_LT))
@@ -117,6 +120,12 @@ int main()
                     while(!bcm2835_gpio_lev(PIN_BTN_Y));
                     break;
                 }
+		else if(!bcm2835_gpio_lev(PIN_BTN_A))
+                {
+                    state = SLEEP;
+                    while(!bcm2835_gpio_lev(PIN_BTN_A));
+                    break;
+                }
             }
             switch(state)
             {
@@ -124,10 +133,12 @@ int main()
                     if(bcm2835_gpio_lev(PIN_TFT_LED) == 1)
                     {
                         bcm2835_gpio_write(PIN_TFT_LED, LOW);
+			sleep = 1;
                     }
                     else 
                     {
                         bcm2835_gpio_write(PIN_TFT_LED, HIGH);
+			sleep = 0;
                     }
                     break;
                 case VOL_UP:
@@ -159,7 +170,14 @@ int main()
             while(0 == (MCP_readChannel(CHANNEL_BTN) >> 9));
             continue;
         }
-        struct input_event ev[17];
+	    
+	if(sleep == 1)
+	{
+	    usleep(POLLING_DELAY_US);
+	    continue;
+	}
+	    
+        struct input_event ev[18];
         memset(&ev, 0, sizeof(ev));
 
         ev[0].type = EV_KEY;
@@ -241,10 +259,14 @@ int main()
             printf("VALUE: %d\r\n", MCP_readChannel(CHANNEL_ABS_RY));
             usleep(1000);
         #endif
+	    
+	ev[16].type = EV_KEY;
+        ev[16].code = KEY_ESC;
+        ev[16].value = !(MCP_readChannel(CHANNEL_BTN) >> 9);
 
-        ev[16].type = EV_SYN;
-        ev[16].code = SYN_REPORT;
-        ev[16].value = 0;
+        ev[17].type = EV_SYN;
+        ev[17].code = SYN_REPORT;
+        ev[17].value = 0;
 
         if(write(UINPUT_handle, &ev, sizeof ev) < 0)
         {
@@ -327,9 +349,10 @@ int UINPUT_initialize()
     ioctl(inputfd, UI_SET_KEYBIT, KEY_X);
     ioctl(inputfd, UI_SET_KEYBIT, KEY_Y);
     ioctl(inputfd, UI_SET_KEYBIT, KEY_W);
-	ioctl(inputfd, UI_SET_KEYBIT, KEY_A);
+    ioctl(inputfd, UI_SET_KEYBIT, KEY_A);
     ioctl(inputfd, UI_SET_KEYBIT, KEY_S);
     ioctl(inputfd, UI_SET_KEYBIT, KEY_D);
+    ioctl(inputfd, UI_SET_KEYBIT, KEY_ESC);
 
     UINPUT_setupAbs(inputfd, ABS_X,  ABS_X_MIN, ABS_X_MAX);
     UINPUT_setupAbs(inputfd, ABS_Y,  ABS_Y_MIN, ABS_Y_MAX);
