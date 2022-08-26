@@ -31,19 +31,18 @@
 
 #define POLLING_DELAY_US    12000 //still should allow to achieve even 60cps
 #define SHUTDOWN_VALUE      270
-//#define DEBUG
+//#define DEBUGF                //use to calibrate the joysticks
 #define BTN_PULLUP
-#define PWM_CHANNEL 0
-#define RANGE 1024
 
-#define ABS_X_MIN           150
-#define ABS_X_MAX           850
-#define ABS_Y_MIN           150
-#define ABS_Y_MAX           880
-#define ABS_RX_MIN          190
+//put your min/max readings here!
+#define ABS_X_MIN           180
+#define ABS_X_MAX           820
+#define ABS_Y_MIN           180
+#define ABS_Y_MAX           820
+#define ABS_RX_MIN          180
 #define ABS_RX_MAX          820
 #define ABS_RY_MIN          180
-#define ABS_RY_MAX          770
+#define ABS_RY_MAX          820
 
 const struct uinput_setup setup =
 {
@@ -73,6 +72,10 @@ void UINPUT_setupAbs(int fd, unsigned chan, int min, int max);
 int UINPUT_close(int h);
 void BCM2835_initialize();
 void BCM2835_close();
+
+float map(long x, long in_min, long in_max, long out_min, long out_max) {
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
 
 int main()
 {   
@@ -210,7 +213,7 @@ int main()
         ev[12].type = EV_ABS;
         ev[12].code = ABS_X;
         ev[12].value = MCP_readChannel(CHANNEL_ABS_X);
-        #ifdef DEBUG
+        #ifdef DEBUGF
             printf("VALUE: %d ", MCP_readChannel(CHANNEL_ABS_X));
             usleep(1000);
         #endif
@@ -218,7 +221,7 @@ int main()
         ev[13].type = EV_ABS;
         ev[13].code = ABS_Y;
         ev[13].value = MCP_readChannel(CHANNEL_ABS_Y);
-        #ifdef DEBUG
+        #ifdef DEBUGF
             printf("VALUE: %d ", MCP_readChannel(CHANNEL_ABS_Y));
             usleep(1000);
         #endif
@@ -226,7 +229,7 @@ int main()
         ev[14].type = EV_ABS;
         ev[14].code = ABS_RX;
         ev[14].value = MCP_readChannel(CHANNEL_ABS_RX);
-        #ifdef DEBUG
+        #ifdef DEBUGF
             printf("VALUE: %d ", MCP_readChannel(CHANNEL_ABS_RX));
             usleep(1000);
         #endif
@@ -234,7 +237,7 @@ int main()
         ev[15].type = EV_ABS;
         ev[15].code = ABS_RY;
         ev[15].value = MCP_readChannel(CHANNEL_ABS_RY);
-        #ifdef DEBUG
+        #ifdef DEBUGF
             printf("VALUE: %d\r\n", MCP_readChannel(CHANNEL_ABS_RY));
             usleep(1000);
         #endif
@@ -252,13 +255,15 @@ int main()
         if(counter >= 300)
         {
             uint16_t bat = MCP_readChannel(CHANNEL_BAT);
-            float bat_percentage = (((((3.3*bat)/1024)*3.7)-3)/1.2)*100;
+            //printf("BAT: %d\n\r", bat);
+            //float bat_percentage = (((((3.3*bat)/1024)*3.7)-3)/1.2)*100;
+            float bat_percentage = ((bat*3.7)-931)/373*100; //it actually shows voltage percentage from 3 to 4.2v but eh
+            //printf("malinkabtn: the battery is at %.f%%\n\r", bat_percentage);
             if(bat_percentage <= 1)
             {
                 system("sudo shutdown now");
             }
             FILE *FILE_handle = fopen("battery", "w");
-            printf("malinkabtn: the battery is at %.f%%\n\r", bat_percentage);
             if(hide_overlay == 1)
             {
                 fprintf(FILE_handle, "non");
