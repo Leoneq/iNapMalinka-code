@@ -101,7 +101,9 @@ make
 ```
 As a result, you will get two executable iles: `malinkabtn` and `malinkabtn-sans`, which is a special branch of the driver made just to fight sans.
 For the first setup, let's stick with the main `malinkabtn`, and test it with `sudo ./malinkabtn`:
+
 ![image](https://user-images.githubusercontent.com/36605644/184636035-f2a6850e-3706-4112-b406-542449194325.png)
+
 Exit with CTRL+C. 
 
 ## Installing the screen driver
@@ -168,7 +170,9 @@ sudo dphys-swapfile swapon
 ```
 ## Enabling audio
 Go to `raspi-config` and select headphones as the default audio device (System options > Audio > Headphones)
+
 ![image](https://user-images.githubusercontent.com/36605644/186368711-3fdc0acb-ecf5-4859-b0a8-9bf40f693290.png)
+
 And then `sudo reboot now`.
 
 ## Enabling the equalizer
